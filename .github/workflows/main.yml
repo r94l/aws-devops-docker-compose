@@ -1,8 +1,9 @@
 name: Deploy Two-Tier Flask App (Docker Compose)
 
-on:
+"on":
   push:
-    branches: ["main"]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -13,28 +14,51 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          path: app   # puts repo into ./app on the runner
+          path: app
 
       - name: Deploy with Docker Compose
+        shell: bash
         run: |
-          set -e
+          set -euo pipefail
           cd app
 
-          # Pull latest images if you ever use image tags (optional)
-          # docker compose pull || true
-
-          # Start/Update containers without tearing everything down
           docker compose down
           docker compose up -d --build
 
+          docker compose ps
           docker ps
 
-          # Wait for the app to be healthy (up to ~60s)
-          for i in {1..30}; do
-            if curl -fsS http://localhost/ > /dev/null; then
-              echo "Health check passed"
+          # Wait for flask-app container to become healthy (up to ~180s)
+          svc="flask-app"
+          cid="$(docker compose ps -q "$svc")"
+
+          if [ -z "$cid" ]; then
+            echo "Container not found for service: $svc"
+            docker compose ps
+            exit 1
+          fi
+
+          for i in {1..90}; do
+            status="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}' "$cid")"
+            echo "flask-app health: $status"
+
+            if [ "$status" = "healthy" ]; then
+              echo "App is healthy"
+              curl -i http://localhost/ || true
               exit 0
             fi
-            echo "Waiting for app..."
+
+            if [ "$status" = "unhealthy" ]; then
+              echo "App became unhealthy"
+              docker compose logs --tail=200 flask-app
+              docker compose logs --tail=200 mysql
+              exit 1
+            fi
+
             sleep 2
-            done
+          done
+
+          echo "Timed out waiting for health"
+          docker compose logs --tail=200 flask-app
+          docker compose logs --tail=200 mysql
+          exit 1
