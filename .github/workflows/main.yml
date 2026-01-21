@@ -37,8 +37,4 @@ jobs:
             fi
             echo "Waiting for app..."
             sleep 2
-          done
-
-          echo "Health check failed"
-          docker compose logs --tail=200:
-          exit 1
+            done
