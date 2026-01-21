@@ -17,13 +17,8 @@ jobs:
           path: app
 
       - name: Deploy with Docker Compose
-        shell: bash
         run: |
-          set -euo pipefail
           cd app
-
           docker compose down
           docker compose up -d --build
-
-          docker compose ps
           docker ps
