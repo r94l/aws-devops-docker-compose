@@ -33,11 +33,19 @@ services:
     networks:
       - two-tier-nt
     depends_on:
-      mysql:
-        condition: service_healthy
+      - mysql
     restart: always
+    command: >
+      sh -lc "
+      until mysqladmin ping -h mysql -uroot -proot --silent; do
+        echo 'Waiting for mysql...'; sleep 2;
+    done;
+    python app.py
+    "
+
+    
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5000/health || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 20
