@@ -25,7 +25,6 @@ services:
 
 
   flask-app:
-    container_name: two-tier-app
     build:
       context: .
 
