@@ -31,7 +31,7 @@ jobs:
 
           # Wait for the app to be healthy (up to ~60s)
           for i in {1..30}; do
-            if curl -fsS http://localhost/health > /dev/null; then
+            if curl -fsS http://localhost/ > /dev/null; then
               echo "Health check passed"
               exit 0
             fi
