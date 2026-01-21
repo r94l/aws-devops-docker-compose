@@ -16,6 +16,7 @@ jobs:
           path: app
 
       - name: Deploy with Docker Compose
+        shell: bash
         run: |
           cd app
           docker compose down
