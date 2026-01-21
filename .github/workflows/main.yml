@@ -1,0 +1,27 @@
+name: Deploy Two-Tier Flask App (Docker Compose)
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          path: app   # puts repo into ./app on the runner
+
+      - name: Deploy with Docker Compose
+        run: |
+          set -e
+          cd app
+
+          docker compose down
+          docker compose up -d --build
+
+          docker ps
+          curl -fsS http://localhost/health
