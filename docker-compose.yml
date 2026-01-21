@@ -3,7 +3,7 @@ version: "3.8"
 services:
   mysql:
     container_name: mysql
-    image: mysql
+    image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: "root"
       MYSQL_DATABASE: "devops"
@@ -26,10 +26,10 @@ services:
     ports:
       - "80:5000"   # <— host:container
     environment:
-      - MYSQL_HOST=mysql
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=root
-      - MYSQL_DB=devops
+      - MYSQL_HOST: mysql
+      - MYSQL_USER: root
+      - MYSQL_PASSWORD: root
+      - MYSQL_DB: devops
     networks:
       - two-tier-nt
     depends_on:
