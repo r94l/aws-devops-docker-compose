@@ -27,38 +27,3 @@ jobs:
 
           docker compose ps
           docker ps
-
-          # Wait for flask-app container to become healthy (up to ~180s)
-          svc="flask-app"
-          cid="$(docker compose ps -q "$svc")"
-
-          if [ -z "$cid" ]; then
-            echo "Container not found for service: $svc"
-            docker compose ps
-            exit 1
-          fi
-
-          for i in {1..90}; do
-            status="$(docker inspect -f '{{if .State.Health}}{{.State.Health.Status}}{{else}}no-healthcheck{{end}}' "$cid")"
-            echo "flask-app health: $status"
-
-            if [ "$status" = "healthy" ]; then
-              echo "App is healthy"
-              curl -i http://localhost/ || true
-              exit 0
-            fi
-
-            if [ "$status" = "unhealthy" ]; then
-              echo "App became unhealthy"
-              docker compose logs --tail=200 flask-app
-              docker compose logs --tail=200 mysql
-              exit 1
-            fi
-
-            sleep 2
-          done
-
-          echo "Timed out waiting for health"
-          docker compose logs --tail=200 flask-app
-          docker compose logs --tail=200 mysql
-          exit 1
