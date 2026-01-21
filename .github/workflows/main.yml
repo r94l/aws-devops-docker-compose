@@ -24,6 +24,7 @@ jobs:
           # docker compose pull || true
 
           # Start/Update containers without tearing everything down
+          docker compose down
           docker compose up -d --build
 
           docker ps
@@ -39,5 +40,5 @@ jobs:
           done
 
           echo "Health check failed"
-          docker compose logs --tail=200
+          docker compose logs --tail=200:
           exit 1
