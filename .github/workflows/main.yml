@@ -20,8 +20,24 @@ jobs:
           set -e
           cd app
 
-          docker compose down
+          # Pull latest images if you ever use image tags (optional)
+          # docker compose pull || true
+
+          # Start/Update containers without tearing everything down
           docker compose up -d --build
 
           docker ps
-          curl -fsS http://localhost/health
+
+          # Wait for the app to be healthy (up to ~60s)
+          for i in {1..30}; do
+            if curl -fsS http://localhost/health > /dev/null; then
+              echo "Health check passed"
+              exit 0
+            fi
+            echo "Waiting for app..."
+            sleep 2
+          done
+
+          echo "Health check failed"
+          docker compose logs --tail=200
+          exit 1
