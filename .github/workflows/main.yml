@@ -15,6 +15,18 @@ jobs:
         run: |
           docker system prune -af || true
           docker volume prune -f || true
+
+      - name: Set up Environment Variables
+        run: |
+          cat > .env << 'EOF'
+          MYSQL_HOST=mysql
+          MYSQL_DB=devops
+          MYSQL_USER=${{ secrets.MYSQL_USER }}
+          MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
+          MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
+          EOF
+
+          docker compose --env-file .env up -d --build
       
       - name: Deploy
         run: |
