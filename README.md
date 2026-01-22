@@ -66,7 +66,7 @@ This ensures **consistent, repeatable, and automated deployments**.
 ## How to Run Locally
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/r94l/aws-devops-docker-compose
 cd aws-devops-docker-compose
 docker compose up -d
 ```
