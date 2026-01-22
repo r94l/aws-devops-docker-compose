@@ -22,13 +22,10 @@ This demonstrates **stateful persistence with a stateless application layer**.
 ## Architecture
 
 ```
-Browser
-  ↓
-EC2 (Port 80)
-  ↓
-Flask Container
-  ↓
-MySQL Container
+GitHub → GitHub Actions → EC2 (Self-hosted Runner)
+                               |
+                               ├── Flask Container (Port 80)
+                               └── MySQL Container (Volume)
 ```
 
 Containers communicate over a **custom Docker network** using service discovery.
