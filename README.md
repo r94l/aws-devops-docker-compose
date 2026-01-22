@@ -1,24 +1,83 @@
+# Two-Tier Flask Application (Flask + MySQL)
+
+## Overview
+
+This repository demonstrates a **production-style DevOps deployment** of a **two-tier web application** using **Flask** and **MySQL**, containerized with **Docker**, orchestrated using **Docker Compose**, and deployed to **AWS EC2** via a **GitHub Actions CI/CD pipeline**.
+
+> The focus of this project is **infrastructure, automation, and reliability**, not application complexity.
+
+---
+
+## What the Application Does
+
+* Users access the app via the EC2 public IP
+* Users submit messages through a simple UI
+* Messages are stored in a MySQL database
+* Stored messages persist and are displayed on page reload
+
+This demonstrates **stateful persistence with a stateless application layer**.
+
+---
+
 ## Architecture
 
-- AWS EC2 (Ubuntu)
-- Self-hosted GitHub Actions runner installed on EC2
-- Docker Compose orchestrates:
-  - Flask application container
-  - MySQL database container
-- GitHub Actions triggers on push to `main` and deploys directly to EC2
+```
+Browser
+  ↓
+EC2 (Port 80)
+  ↓
+Flask Container
+  ↓
+MySQL Container
+```
 
-## CI/CD Flow
+Containers communicate over a **custom Docker network** using service discovery.
 
-1. Developer pushes code to GitHub
-2. GitHub Actions workflow runs on EC2 self-hosted runner
-3. Docker images are built on the instance
-4. Docker Compose updates running containers
-5. Health checks verify successful deployment
+---
 
-## Key Challenges Solved
+## CI/CD Pipeline Purpose
 
-- Handled MySQL readiness using retry logic to avoid container crashes
-- Prevented container name and port conflicts in repeated deployments
-- Managed disk exhaustion on small EC2 instances
-- Ensured idempotent deployments with Docker Compose
-- Separated application and database concerns securely
+The GitHub Actions pipeline automates deployment on every push to the `main` branch.
+
+**Pipeline responsibilities:**
+
+* Checkout source code
+* Run on a self-hosted EC2 runner
+* Build and deploy containers with Docker Compose
+* Inject secrets securely at runtime
+* Restart services and verify health
+
+This ensures **consistent, repeatable, and automated deployments**.
+
+---
+
+## DevOps Best Practices Used
+
+* Dockerized application and database
+* Multi-container orchestration with Docker Compose
+* Environment-based configuration (12-factor principles)
+* Secrets management via GitHub Actions
+* Health checks and dependency handling
+* Persistent storage using Docker volumes
+* Clear separation of application and data tiers
+
+---
+
+## How to Run Locally
+
+```bash
+git clone <repository-url>
+cd aws-devops-docker-compose
+docker compose up -d
+```
+
+Access the app:
+
+```
+http://localhost:80
+```
+
+---
+
+✔ Project completed
+✔ CI/CD functional
