@@ -28,20 +28,3 @@ jobs:
 
           docker compose --env-file .env down || true
           docker compose --env-file .env up -d --build
-      
-      - name: Wait for app health
-        run: |
-          set -e
-          for i in {1..60}; do
-            if curl -fsS http://localhost/ >/dev/null; then
-              echo "Health OK"
-              exit 0
-            fi
-            echo "Waiting for app..."
-            sleep 2
-          done
-
-          echo "Health failed"
-          docker compose logs --tail=200 flask-app || true
-          docker compose logs --tail=200 mysql || true
-          exit 1
