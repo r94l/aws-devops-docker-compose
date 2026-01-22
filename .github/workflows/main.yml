@@ -16,7 +16,7 @@ jobs:
           docker system prune -af || true
           docker volume prune -f || true
 
-      - name: Set up Environment Variables
+      - name: Environment Setup & Container Build
         run: |
           cat > .env << 'EOF'
           MYSQL_HOST=mysql
