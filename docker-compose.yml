@@ -37,8 +37,7 @@ services:
     networks:
       - two-tier-nt
 
-    depends_on:
-      -mysql
+    depends_on: [mysql]
         
 
     healthcheck:
