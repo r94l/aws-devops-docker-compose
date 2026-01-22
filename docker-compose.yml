@@ -9,6 +9,9 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
+    volumes:
+      - mysql-data:/var/lib/mysql
+
     networks:
       - two-tier-nt
 
@@ -46,6 +49,9 @@ services:
       timeout: 5s
       retries: 5
       start_period: 60s
+
+volumes:
+  mysql-data:
 
 networks:
   two-tier-nt:
