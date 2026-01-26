@@ -49,6 +49,6 @@ services:
       start_period: 60s
 
 networks:
-  two-tier-nt
+  two-tier-nt:
 volumes:
   mysql-data:
